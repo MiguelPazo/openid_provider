@@ -1,0 +1,24 @@
+{
+  "name": "openid_provider",
+  "description": "",
+  "main": "",
+  "authors": [
+    "Miguel Pazo"
+  ],
+  "license": "MIT",
+  "homepage": "https://github.com/MiguelPazo/openid_provider",
+  "moduleType": [],
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "public/js/libs",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "bootstrap": "^3.3.6",
+    "angular": "~1.4.7",
+    "ngstorage": "~0.3.10"
+  }
+}
