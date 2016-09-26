@@ -13,10 +13,12 @@
 
 Route::get('/', 'Auth\LoginController@getLogin');
 Route::post('/login', 'Auth\LoginController@postLogin');
-Route::get('/frame', 'Auth\LoginController@getFrame');
+Route::get('/frame_sso', 'Auth\LoginController@getFrameSSO');
+Route::get('/frame_slo', 'Auth\LoginController@getFrameSLO');
 
 Route::group([
     'prefix' => 'token'
 ], function () {
-    Route::get('/validate/{token}', 'TokenController@getValidate');
+    Route::get('/validate/', 'TokenController@getValidate');
+    Route::get('/logout/', 'TokenController@getLogout');
 });

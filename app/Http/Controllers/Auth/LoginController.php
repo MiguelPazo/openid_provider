@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Token;
 use Illuminate\Http\Request;
 use Lcobucci\JWT\Builder;
 use Lcobucci\JWT\Signer\Hmac\Sha256;
@@ -29,13 +30,21 @@ class LoginController extends Controller
         $pass = $request->get('pass');
 
         if ($this->user == $user && $this->pass == $pass) {
+            $oToken = Token::create([
+                'token' => '--'
+            ]);
+
             $builder = new Builder();
             $signer = new Sha256();
             $token = $builder->setIssuer(url('/') . '/')
                 ->setIssuedAt(time())
                 ->setExpiration(time() + 3600)
+                ->set('uid', $oToken->id)
                 ->sign($signer, env('JWT_KEY'))
                 ->getToken();
+
+            $oToken->token = (string)$token;
+            $oToken->save();
 
             $jResponse['success'] = true;
             $jResponse['token'] = (string)$token;
@@ -46,8 +55,13 @@ class LoginController extends Controller
         return response()->json($jResponse);
     }
 
-    public function getFrame()
+    public function getFrameSSO()
     {
-        return view('frame');
+        return view('frame_sso');
+    }
+
+    public function getFrameSLO()
+    {
+        return view('frame_slo');
     }
 }

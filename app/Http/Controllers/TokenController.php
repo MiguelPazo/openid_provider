@@ -2,35 +2,72 @@
 
 namespace App\Http\Controllers;
 
+use App\Token;
 use Illuminate\Http\Request;
 
 use App\Http\Requests;
+use Illuminate\Support\Facades\Log;
 use Lcobucci\JWT\Parser;
 use Lcobucci\JWT\Signer\Hmac\Sha256;
 use Lcobucci\JWT\ValidationData;
 
 class TokenController extends Controller
 {
-    public function getValidate($token)
+    public function getValidate(Request $request)
     {
         $jResponse = [
             'success' => false,
             'message' => null
         ];
 
-        $token = (new Parser())->parse((string)$token);
-        $signer = new Sha256();
-        $validator = new ValidationData();
-        $validator->setIssuer(env('JWT_ISSUER'));
+        try {
+            $token = $request->get('token');
+            $token = (new Parser())->parse((string)$token);
+            $signer = new Sha256();
+            $validator = new ValidationData();
+            $validator->setIssuer(env('JWT_ISSUER'));
 
-        $isValid = ($token->validate($validator)) ? $token->verify($signer, env('JWT_KEY')) : false;
+            $isValid = ($token->validate($validator)) ? $token->verify($signer, env('JWT_KEY')) : false;
 
-        if ($isValid) {
-            $jResponse['success'] = true;
-        } else {
-            $jResponse['message'] = 'Token incorrecto.';
+            if ($isValid) {
+                $id = $token->getClaim('uid');
+                $oToken = Token::find($id);
+
+                if ($oToken) {
+                    $jResponse['success'] = true;
+                }
+
+            } else {
+                $jResponse['message'] = 'Token incorrecto.';
+            }
+        } catch (\Exception $ex) {
+            Log::error($ex->getMessage());
+            Log::error($ex->getTraceAsString());
+
+            $jResponse['message'] = 'Formato incorrecto.';
         }
 
         return response()->json($jResponse);
+    }
+
+    public function getLogout(Request $request)
+    {
+        try {
+            $token = $request->get('token');
+            $token = (new Parser())->parse((string)$token);
+            $signer = new Sha256();
+            $validator = new ValidationData();
+            $validator->setIssuer(env('JWT_ISSUER'));
+
+            $isValid = ($token->validate($validator)) ? $token->verify($signer, env('JWT_KEY')) : false;
+
+            if ($isValid) {
+                $id = $token->getClaim('uid');
+                Token::truncate($id);
+            }
+        } catch (\Exception $ex) {
+            Log::error($ex->getMessage());
+            Log::error($ex->getTraceAsString());
+        }
     }
 }
