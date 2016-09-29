@@ -40,6 +40,7 @@ class LoginController extends Controller
                 ->setIssuedAt(time())
                 ->setExpiration(time() + 3600)
                 ->set('uid', $oToken->id)
+                ->set('nam', 'Miguel Pazo Sanchez')
                 ->sign($signer, env('JWT_KEY'))
                 ->getToken();
 

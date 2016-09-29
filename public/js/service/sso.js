@@ -90,7 +90,6 @@ function sso() {
             login(jwt);
 
             setInterval(function () {
-                console.log('validateJWT');
                 if (!validateJWT(jwt)) {
                     logout();
                 }
