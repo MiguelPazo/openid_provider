@@ -3,6 +3,7 @@
 <head>
     <title>OpenId Connect Provider</title>
     <link rel="stylesheet" href="{{ asset('/js/libs/bootstrap/dist/css/bootstrap.min.css') }}"/>
+    <meta name="gsslo.federationId" content="5995a3c9"/>
 </head>
 <body ng-controller="loginController">
 <div class="container">
@@ -40,7 +41,7 @@
     </div>
 </div>
 <script src="{{ asset('/js/libs/angular/angular.min.js') }}"></script>
-<script src="{{ asset('/js/libs/ngstorage/ngStorage.min.js') }}"></script>
 <script src="{{ asset('/js/login.js') }}"></script>
+<script src="{{ asset('/js/service/gsslo.js') }}"></script>
 </body>
 </html>

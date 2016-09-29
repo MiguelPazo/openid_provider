@@ -13,8 +13,9 @@
 
 Route::get('/', 'Auth\LoginController@getLogin');
 Route::post('/login', 'Auth\LoginController@postLogin');
-Route::get('/frame_sso', 'Auth\LoginController@getFrameSSO');
-Route::get('/frame_slo', 'Auth\LoginController@getFrameSLO');
+Route::get('/frame', function () {
+    return view('frame');
+});
 
 Route::group([
     'prefix' => 'token'

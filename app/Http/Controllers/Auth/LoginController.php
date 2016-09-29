@@ -23,7 +23,7 @@ class LoginController extends Controller
         $jResponse = [
             'success' => false,
             'message' => null,
-            'token' => null
+            'jwt' => null
         ];
 
         $user = $request->get('user');
@@ -47,7 +47,7 @@ class LoginController extends Controller
             $oToken->save();
 
             $jResponse['success'] = true;
-            $jResponse['token'] = (string)$token;
+            $jResponse['jwt'] = (string)$token;
         } else {
             $jResponse['message'] = 'Usuario o contraseña incorrectos';
         }

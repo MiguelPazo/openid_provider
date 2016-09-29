@@ -1,16 +1,16 @@
-var app = angular.module("OpenIDConnect", ['ngStorage']);
+var app = angular.module('OpenIDConnect', []);
 
-app.config(function ($interpolateProvider, $localStorageProvider) {
+app.config(function ($interpolateProvider) {
     $interpolateProvider.startSymbol('[[').endSymbol(']]');
-    $localStorageProvider.setKeyPrefix('app_');
 });
 
-app.controller('loginController', function ($scope, $http, $localStorage) {
+app.controller('loginController', function ($scope, $http) {
     $scope.user = {
         user: null,
         pass: null
     };
     $scope.error = null;
+    $scope.token = 'token.5995a3c9';
 
     $scope.send = function () {
         $http({
@@ -19,14 +19,10 @@ app.controller('loginController', function ($scope, $http, $localStorage) {
             data: $scope.user
         }).success(function (response) {
             if (response.success) {
-                $localStorage.token = response.token;
+                gsslo.login(response.jwt);
             } else {
                 $scope.error = response.message;
             }
         });
     }
-
-    console.log(localStorage);
-
-    console.log($localStorage.token);
 });
