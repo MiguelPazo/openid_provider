@@ -6,7 +6,9 @@ use App\Http\Controllers\Controller;
 use App\Token;
 use Illuminate\Http\Request;
 use Lcobucci\JWT\Builder;
-use Lcobucci\JWT\Signer\Hmac\Sha256;
+use Lcobucci\JWT\Signer\Keychain;
+use Lcobucci\JWT\Signer\Rsa\Sha256;
+use Lcobucci\JWT\ValidationData;
 
 class LoginController extends Controller
 {
@@ -36,12 +38,14 @@ class LoginController extends Controller
 
             $builder = new Builder();
             $signer = new Sha256();
-            $token = $builder->setIssuer(url('/') . '/')
+            $keyChain = new Keychain();
+
+            $token = $builder->setIssuer(env('JWT_ISSUER'))
                 ->setIssuedAt(time())
                 ->setExpiration(time() + 3600)
                 ->set('uid', $oToken->id)
                 ->set('nam', 'Miguel Pazo Sanchez')
-                ->sign($signer, env('JWT_KEY'))
+                ->sign($signer, $keyChain->getPrivateKey(file_get_contents(storage_path('/app/private'))))
                 ->getToken();
 
             $oToken->token = (string)$token;

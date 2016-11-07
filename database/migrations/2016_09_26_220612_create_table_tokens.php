@@ -15,7 +15,7 @@ class CreateTableTokens extends Migration
     {
         Schema::create('tokens', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('token', 500)->nullable();
+            $table->text('token')->nullable();
         });
     }
 

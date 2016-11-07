@@ -14,9 +14,9 @@ function sso() {
         window.parent.postMessage(message, '*');
     }
 
-    function validateJWT(jwt) {
+    function validateJWT(idToken) {
         try {
-            var data = utils.decodeJWT(jwt);
+            var data = utils.decodeJWT(idToken);
             var exp = data.exp * 1000;
             var now = (new Date()).getTime();
 
@@ -29,10 +29,10 @@ function sso() {
     }
 
     function localStorageHandler() {
-        var jwt = localStorage.getItem(this.config.tokenId);
+        var idToken = localStorage.getItem(this.config.tokenId);
 
-        if (jwt) {
-            login(jwt);
+        if (idToken) {
+            login(idToken);
         } else {
             logout();
         }
@@ -44,12 +44,12 @@ function sso() {
         postMessageToParent(message);
     }
 
-    function login(jwt) {
-        if (validateJWT(jwt)) {
+    function login(idToken) {
+        if (validateJWT(idToken)) {
             var message = {
                 action: 'gsslo.logued',
-                jwt: jwt,
-                user: utils.decodeJWT(jwt)
+                idToken: idToken,
+                user: utils.decodeJWT(idToken)
             };
 
             postMessageToParent(message);
@@ -64,33 +64,32 @@ function sso() {
         if (data) {
             switch (data.action) {
                 case 'login':
-                    if (data.hasOwnProperty('jwt')) {
-                        localStorage.setItem(this.config.tokenId, data.jwt);
-                        login(data.jwt);
-                    }
-                    break;
-                case 'validate':
-                    if (data.hasOwnProperty('jwt')) {
-                        if (!validateJWT(data.jwt)) {
-                            logout();
-                        }
+                    if (data.hasOwnProperty('idToken')) {
+                        localStorage.setItem(this.config.tokenId, data.idToken);
+                        login(data.idToken);
                     }
                     break;
                 case 'logout':
                     logout();
+                    break;
+                case 'isLogued':
+                    if (!validateJWT(data.idToken)) {
+                        var message = {action: 'gsslo.nologued'};
+                        postMessageToParent(message);
+                    }
                     break;
             }
         }
     }
 
     function run() {
-        var jwt = localStorage.getItem(this.config.tokenId);
+        var idToken = localStorage.getItem(this.config.tokenId);
 
-        if (jwt) {
-            login(jwt);
+        if (idToken) {
+            login(idToken);
 
             setInterval(function () {
-                if (!validateJWT(jwt)) {
+                if (!validateJWT(idToken)) {
                     logout();
                 }
             }, 60000);
@@ -130,8 +129,8 @@ var utils = {
 
         return null;
     },
-    decodeJWT: function (jwt) {
-        var base64Url = jwt.split('.')[1];
+    decodeJWT: function (idToken) {
+        var base64Url = idToken.split('.')[1];
         var base64 = base64Url.replace('-', '+').replace('_', '/');
         return JSON.parse(window.atob(base64));
     }

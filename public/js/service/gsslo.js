@@ -1,18 +1,18 @@
 var gsslo = new gsslo();
 
 function gsslo() {
-    this.login = function (jwt) {
-        var message = {action: 'login', jwt: jwt};
-        postMessage(message, getUrlIDP());
-    }
-
-    this.validateToken = function (jwt) {
-        var message = {action: 'validate', jwt: jwt};
+    this.login = function (idToken) {
+        var message = {action: 'login', idToken: idToken};
         postMessage(message, getUrlIDP());
     }
 
     this.logout = function () {
         var message = {action: 'logout'};
+        postMessage(message, getUrlIDP());
+    }
+
+    this.isLogued = function () {
+        var message = {action: 'isLogued'};
         postMessage(message, getUrlIDP());
     }
 
@@ -82,15 +82,21 @@ function gsslo() {
                     break;
                 case 'gsslo.logued':
                     if (typeof gssloLogued == 'function') {
-                        gssloLogued(data.jwt, data.user);
+                        gssloLogued(data.idToken, data.user);
                     }
-                    dispashEvent('gssloLogued', {jwt: data.jwt, user: data.user});
+                    dispashEvent('gssloLogued', {idToken: data.idToken, user: data.user});
                     break;
                 case 'gsslo.logout':
                     if (typeof gssloLogout == 'function') {
                         gssloLogout();
                     }
                     dispashEvent('gssloLogout');
+                    break;
+                case 'gsslo.nologued':
+                    if (typeof gssloNologued == 'function') {
+                        gssloNologued();
+                    }
+                    dispashEvent('gssloNologued');
                     break;
             }
         }
@@ -110,5 +116,3 @@ function gsslo() {
 
     window.addEventListener('load', run);
 }
-
-

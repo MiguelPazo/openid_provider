@@ -13,6 +13,7 @@
 
 Route::get('/', 'Auth\LoginController@getLogin');
 Route::post('/login', 'Auth\LoginController@postLogin');
+Route::get('/login', 'Auth\LoginController@postLogin');
 Route::get('/frame', function () {
     return view('frame');
 });
