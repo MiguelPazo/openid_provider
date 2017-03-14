@@ -36,7 +36,7 @@ function gsslo() {
 
     function getUrlIframe() {
         var parser = document.createElement('a');
-        parser.href = getUrlScript()
+        parser.href = getUrlScript();
 
         var url = parser.protocol + '//' + parser.host + '/frame';
         var origin = document.location.origin;
@@ -116,3 +116,5 @@ function gsslo() {
 
     window.addEventListener('load', run);
 }
+
+
