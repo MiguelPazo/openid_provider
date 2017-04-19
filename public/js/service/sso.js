@@ -73,7 +73,11 @@ function sso() {
                     logout();
                     break;
                 case 'isLogued':
-                    if (!validateJWT(data.idToken)) {
+                    var token = localStorage.getItem(this.config.tokenId);
+
+                    if (validateJWT(token)) {
+                        login(token);
+                    } else {
                         var message = {action: 'gsslo.nologued'};
                         postMessageToParent(message);
                     }
